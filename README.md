@@ -92,13 +92,14 @@ mode should be adopted.
   Each value must correspond to the type of the enum.  The names and
   values should be unique.
 - sequence - Represents a homogenous sequence of values of a given
-  type.  A sequence has an optional size that indicates the
-  number of elements in the sequence and an optional capacity that
-  indicates the maximum number of elements in the sequence.  If the elements
+  type.  A sequence has has either:
+  1. No size or capacity indicating a dynamic size.
+  2. An integer size indicating a fixed size.
+  3. An array of sizes indicating the size of each dimension.
+  4. A capacity indicating a dynamic size but limit on the number of values in the sequence.
+  The size setting is preferred to the capacity.  If the elements
   have a fixed size, then size and capacity can be used to
-  pre-allocate buffers.  It is a semantic error if size is greater
-  than capacity.  The interpretation of capacity when size is present
-  is deferred to the implementation.
+  pre-allocate buffers.
 - record - A record represents a potentially heterogeneous sequence of
   named values.  A record is defined by a list of fields.  Each field
   has a name, a type, and an optional flag indicating if the field is
@@ -186,7 +187,7 @@ TypeDef:
 | { "name" : string, "kind" : "string", "encoding" : string, ("size" : integer)?, ("capacity" : integer)? }
 | { "name" : string, "kind" : "bitset", "size" : integer, "values" : [ NameValuePair ] }
 | { "name" : string, "kind" : "enum", "type" : Type, "values" : [ NameValuePair ] }
-| { "name" : string, "kind" : "sequence", "type" : Type, ("size" : integer)?, ("capacity" : integer)? }
+| { "name" : string, "kind" : "sequence", "type" : Type,  (( "size" : integer ) | ( "size" : [ integer ] ) | ( "capacity" : integer )) }
 | { "name" : string, "kind" : "record", "fields" : [ Field ] }
 | { "name" : string, "kind" : "union", "discriminator" : Type, "elements" : [ UnionField ], ("default" : integer)? }
 

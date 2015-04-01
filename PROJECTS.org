@@ -1,6 +1,6 @@
 * General
 ** TODO Pick a license
-* Core
+* Grammar
 ** TODO Multidimensional arrays
 * Bindings
   Support for generating and parsing ITL in various languages.
