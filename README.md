@@ -71,7 +71,7 @@ mode should be adopted.
 - **rune** - Represents a glyph in a written language.  A rune has an
   optional encoding.
 - **bitset** - Represents a finite set of zero-sized objects.  A bitset
-  has a size indicating the number of bytes required to represent the
+  has a size indicating the number of bits required to represent the
   universe and a set of named values which must be unsigned integers.
   The names and values should be unique.  The universal is the union
   of values which may be computed using bit-wise OR.  A bitset value
@@ -174,7 +174,7 @@ TypeDef:
 | { ("name" : string,)? "kind" : "float", ("model" : FloatModel)? }
 | { ("name" : string,)? "kind" : "fixed", "base" : integer, "digits" : integer, "scale" : integer }
 | { ("name" : string,)? "kind" : "rune", ("encoding" : string)? }
-| { ("name" : string,)? "kind" : "bitset", "size" : integer, "values" : [ NameValuePair ] }
+| { ("name" : string,)? "kind" : "bitset", "bits" : integer, "values" : [ NameValuePair ] }
 | { ("name" : string,)? "kind" : "enum", "type" : Type, "values" : [ NameValuePair ] }
 | { ("name" : string,)? "kind" : "sequence", "type" : Type,  (( "size" : integer ) | ( "size" : [ integer ] ) | ( "capacity" : integer )) }
 | { ("name" : string,)? "kind" : "record", "fields" : [ Field ] }
