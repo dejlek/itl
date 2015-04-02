@@ -55,43 +55,33 @@ mode should be adopted.
 
 # Types
 
-- byte - An uninterpreted octet.
-- bool - Represents a Boolean value (true or false).
-- int - Represents an integral number.  An int has an encoding, a size
-  (optional), and a flag indicating if the int is unsigned (optional,
-  default false).  The size indicates the number of bytes required to
-  represent a value of this type for a fixed-length encoding.
-- float - Represents a floating-point number.  A float has an encoding
-  and an optional size that indicates the number of bytes required to
-  represent a value of this type for a fixed-length encoding.
-- fixed - Represents a fixed-point number.  A fixed has an encoding, a
-  total number of digits, a scale that indicates the number of digits
-  after the decimal point, and an optional size that indicates the
-  number of bytes required to represent a value of this type for a
-  fixed-length encoding.
-- rune - Represents a glyph in a written language.  A rune has an
-  encoding and an optional size that indicates the
-  number of bytes required to represent a value of this type for a
-  fixed-length encoding.
-- string - Represents a sequence of runes.  A string has an encoding,
-  an optional size that indicates the number of runes in the string,
-  and an optional capacity that indicates the maximum number of runes
-  in the string.  If the runes have a fixed-width encoding, then size
-  and capacity can be used to pre-allocate buffers.  It is a semantic
-  error if size is greater than capacity.  The interpretation of
-  capacity when size is present is deferred to the implementation.
-- bitset - Represents a finite set of zero-sized objects.  A bitset
+- **byte** - An uninterpreted octet.
+- **bool** - Represents a Boolean value (true or false).
+- **int** - Represents an integral number.  An int has the number of
+  bits needed to represent values of this type and a flag indicating
+  if the values are unsigned.  If the number of bits is not present,
+  then the values of this type may have arbitrary magnitude.  The
+  unsigned flag is optional and assumed to be false.
+- **float** - Represents a floating-point number.  A float has an
+  optional model that describes the values represented by this
+  type.
+- **fixed** - Represents a fixed-point number.  A fixed has a base,
+  the total number of digits, and a scale that indicates the number of
+  digits after the decimal point.
+- **rune** - Represents a glyph in a written language.  A rune has an
+  optional encoding.
+- **bitset** - Represents a finite set of zero-sized objects.  A bitset
   has a size indicating the number of bytes required to represent the
   universe and a set of named values which must be unsigned integers.
   The names and values should be unique.  The universal is the union
   of values which may be computed using bit-wise OR.  A bitset value
   should be a subset of the universe and may be checked using bit-wise
   AND against the universe.
-- enum - Represents a set of disjoint values.  An enum has a type that
+- **enum** - Represents a set of disjoint values.  An enum has a type that
   describes the representation of the enum and a set of named values.
   Each value must correspond to the type of the enum.  The names and
   values should be unique.
-- sequence - Represents a homogenous sequence of values of a given
+- **sequence** - Represents a homogenous sequence of values of a given
   type.  A sequence has has either:
   1. No size or capacity indicating a dynamic size.
   2. An integer size indicating a fixed size.
@@ -100,11 +90,11 @@ mode should be adopted.
   The size setting is preferred to the capacity.  If the elements
   have a fixed size, then size and capacity can be used to
   pre-allocate buffers.
-- record - A record represents a potentially heterogeneous sequence of
+- **record** - A record represents a potentially heterogeneous sequence of
   named values.  A record is defined by a list of fields.  Each field
   has a name, a type, and an optional flag indicating if the field is
   optional.  The name of each field must be unique.
-- union - A union represents a value from a finite set of types.  A
+- **union** - A union represents a value from a finite set of types.  A
   union has a discriminator type that is used to determine the actual
   type, a set of fields, and a default which indicates the default
   type.  A union field has a name, a type, a set of values
@@ -113,23 +103,23 @@ mode should be adopted.
   unique.  The pair-wise intersection of union field discriminator
   values must be disjoint.
 
-# Standard Encodings
+# Float Models
 
-The size parameter for ints, floats, fixed, and runes is required when
-specifying a fixed-length encoding.
+A float model refers to a specification for floating-point numbers.
+When a model is specified for a floating-point type, it means that any
+value of the corresponding type *may* be represented by an
+implementation of the model.  An implementation is not restrained by
+the model in its approach to encoding the number.  However,
+implementations and users must be prepared to handle lossy conversions
+and respond appropriately.
 
-## Int Encodings
-
-- "2c" - 2's complement in machine format (fixed-length)
-
-## Float Encodings
-
-- "754b" - IEEE754 binary (fixed-length)
-
-## Fixed Encodings
-
-- "bcd" - binary-coded decimal, one digit per byte (fixed-length)
-- "pbcd" - packed binary-coded decimal, two digits per byte (fixed-length)
+- "binary16" - IEEE 754 of same name
+- "binary32" - IEEE 754 of same name
+- "binary64" - IEEE 754 of same name
+- "binary128" - IEEE 754 of same name
+- "decimal32" - IEEE 754 of same name
+- "decimal64" - IEEE 754 of same name
+- "decimal128" - IEEE 754 of same name
 
 ## Rune/String Encodings
 
@@ -178,18 +168,17 @@ Root:
   { "types" : [ TypeDef ] }
 
 TypeDef:
-  { "name" : string, "kind" : "byte" }
-| { "name" : string, "kind" : "bool" }
-| { "name" : string, "kind" : "int", "encoding" : string, ("size" : integer)?, ("unsigned" : boolean)?,  }
-| { "name" : string, "kind" : "float", "encoding" : string, ("size" : integer)? }
-| { "name" : string, "kind" : "fixed", "encoding" : string, "digits" : integer, "scale" : integer, ("size" : integer)? }
-| { "name" : string, "kind" : "rune", "encoding" : string, ("size" : integer)? }
-| { "name" : string, "kind" : "string", "encoding" : string, ("size" : integer)?, ("capacity" : integer)? }
-| { "name" : string, "kind" : "bitset", "size" : integer, "values" : [ NameValuePair ] }
-| { "name" : string, "kind" : "enum", "type" : Type, "values" : [ NameValuePair ] }
-| { "name" : string, "kind" : "sequence", "type" : Type,  (( "size" : integer ) | ( "size" : [ integer ] ) | ( "capacity" : integer )) }
-| { "name" : string, "kind" : "record", "fields" : [ Field ] }
-| { "name" : string, "kind" : "union", "discriminator" : Type, "elements" : [ UnionField ], ("default" : integer)? }
+  { ("name" : string,)? "kind" : "byte" }
+| { ("name" : string,)? "kind" : "bool" }
+| { ("name" : string,)? "kind" : "int", ("bits" : integer,)? ("unsigned" : boolean)? }
+| { ("name" : string,)? "kind" : "float", ("model" : FloatModel)? }
+| { ("name" : string,)? "kind" : "fixed", "base" : integer, "digits" : integer, "scale" : integer }
+| { ("name" : string,)? "kind" : "rune", ("encoding" : string)? }
+| { ("name" : string,)? "kind" : "bitset", "size" : integer, "values" : [ NameValuePair ] }
+| { ("name" : string,)? "kind" : "enum", "type" : Type, "values" : [ NameValuePair ] }
+| { ("name" : string,)? "kind" : "sequence", "type" : Type,  (( "size" : integer ) | ( "size" : [ integer ] ) | ( "capacity" : integer )) }
+| { ("name" : string,)? "kind" : "record", "fields" : [ Field ] }
+| { ("name" : string,)? "kind" : "union", "discriminator" : Type, "fields" : [ UnionField ], ("default" : integer)? }
 
 Type:
   string
@@ -203,6 +192,8 @@ Field:
 
 UnionField:
   { "name" : string, "type" : Type, "discriminator_values" : [ JSONValue ], "("optional" : boolean)? }
+
+FloatModel: "binary16" | "binary32" | "binary64" | "binary128" | "decimal32" | "decimal64" | "decimal128"
 ```
 
 Every JSON Object ({ ... }) has an optional note field ("note" : {
