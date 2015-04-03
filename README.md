@@ -174,7 +174,7 @@ TypeDef:
 | { ("name" : string,)? "kind" : "float", ("model" : FloatModel)? }
 | { ("name" : string,)? "kind" : "fixed", "base" : integer, "digits" : integer, "scale" : integer }
 | { ("name" : string,)? "kind" : "rune", ("encoding" : string)? }
-| { ("name" : string,)? "kind" : "bitset", "bits" : integer, "values" : [ NameValuePair ] }
+| { ("name" : string,)? "kind" : "bitset", "bits" : integer, "elements" : [ NameValuePair ] }
 | { ("name" : string,)? "kind" : "enum", "type" : Type, "values" : [ NameValuePair ] }
 | { ("name" : string,)? "kind" : "sequence", "type" : Type,  (( "size" : integer ) | ( "size" : [ integer ] ) | ( "capacity" : integer )) }
 | { ("name" : string,)? "kind" : "record", "fields" : [ Field ] }
