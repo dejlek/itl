@@ -72,8 +72,8 @@ mode should be adopted.
   optional encoding.
 - **bitset** - Represents a finite set of zero-sized objects.  A bitset
   has a size indicating the number of bits required to represent the
-  universe and a set of named values which must be unsigned integers.
-  The names and values should be unique.  The universal is the union
+  universe and a set of named elements which must be unsigned integers.
+  The name and value for each element should be unique.  The universal is the union
   of values which may be computed using bit-wise OR.  A bitset value
   should be a subset of the universe and may be checked using bit-wise
   AND against the universe.
@@ -94,14 +94,14 @@ mode should be adopted.
   named values.  A record is defined by a list of fields.  Each field
   has a name, a type, and an optional flag indicating if the field is
   optional.  The name of each field must be unique.
-- **union** - A union represents a value from a finite set of types.  A
-  union has a discriminator type that is used to determine the actual
-  type, a set of fields, and a default which indicates the default
-  type.  A union field has a name, a type, a set of values
-  corresponding to the discriminator type, and an optional flag
-  indicating if the field is optional.  The name of each field must be
-  unique.  The pair-wise intersection of union field discriminator
-  values must be disjoint.
+- **union** - A union represents a value from a finite set of types.
+  A union has a discriminator type that is used to determine the
+  actual type and a set of fields.  A union field has a name, a type,
+  a set of values corresponding to the discriminator type, and an
+  optional flag indicating if the field is optional.  The name of each
+  field must be unique.  The pair-wise intersection of union field
+  discriminator values must be disjoint.  An empty set of
+  discriminator values means that this field is the default.
 
 # Float Models
 
@@ -178,7 +178,7 @@ TypeDef:
 | { ("name" : string,)? "kind" : "enum", "type" : Type, "values" : [ NameValuePair ] }
 | { ("name" : string,)? "kind" : "sequence", "type" : Type,  (( "size" : integer ) | ( "size" : [ integer ] ) | ( "capacity" : integer )) }
 | { ("name" : string,)? "kind" : "record", "fields" : [ Field ] }
-| { ("name" : string,)? "kind" : "union", "discriminator" : Type, "fields" : [ UnionField ], ("default" : integer)? }
+| { ("name" : string,)? "kind" : "union", "discriminator" : Type, "fields" : [ UnionField ] }
 
 Type:
   string
@@ -191,7 +191,7 @@ Field:
   { "name" : string, "type" : Type, ("optional" : boolean)? }
 
 UnionField:
-  { "name" : string, "type" : Type, "discriminator_values" : [ JSONValue ], "("optional" : boolean)? }
+  { "name" : string, "type" : Type, "discriminator_values" : [ JSONValue ], ("optional" : boolean)? }
 
 FloatModel: "binary16" | "binary32" | "binary64" | "binary128" | "decimal32" | "decimal64" | "decimal128"
 ```
