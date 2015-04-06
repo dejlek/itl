@@ -1,7 +1,7 @@
 * General
 ** TODO Pick a license
 ** TODO Examples
-** TODO Common annotations (rational numbers, strings, maps, sets, etc.)
+** TODO Common annotations (enums, bitsets, rational numbers, strings, maps, sets, etc.)
 * Grammar
 ** TODO Tuples
 * Bindings

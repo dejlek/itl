@@ -68,19 +68,6 @@ mode should be adopted.
 - **fixed** - Represents a fixed-point number.  A fixed has a base,
   the total number of digits, and a scale that indicates the number of
   digits after the decimal point.
-- **rune** - Represents a glyph in a written language.  A rune has an
-  optional encoding.
-- **bitset** - Represents a finite set of zero-sized objects.  A bitset
-  has a size indicating the number of bits required to represent the
-  universe and a set of named elements which must be unsigned integers.
-  The name and value for each element should be unique.  The universal is the union
-  of values which may be computed using bit-wise OR.  A bitset value
-  should be a subset of the universe and may be checked using bit-wise
-  AND against the universe.
-- **enum** - Represents a set of disjoint values.  An enum has a type that
-  describes the representation of the enum and a set of named values.
-  Each value must correspond to the type of the enum.  The names and
-  values should be unique.
 - **sequence** - Represents a homogenous sequence of values of a given
   type.  A sequence has has either:
   1. No size or capacity indicating a dynamic size.
@@ -90,18 +77,22 @@ mode should be adopted.
   The size setting is preferred to the capacity.  If the elements
   have a fixed size, then size and capacity can be used to
   pre-allocate buffers.
+- **string** - Represents a text sequence.  A string has an optional
+  integer size and capacity.  If size is specified, it means that the
+  string consists of the specified number of units for an
+  implementation defined unit.  Similarly, capacity represents the
+  maximum number of units in the string.  Size is preferred to capacity.
 - **record** - A record represents a potentially heterogeneous sequence of
   named values.  A record is defined by a list of fields.  Each field
   has a name, a type, and an optional flag indicating if the field is
   optional.  The name of each field must be unique.
 - **union** - A union represents a value from a finite set of types.
   A union has a discriminator type that is used to determine the
-  actual type and a set of fields.  A union field has a name, a type,
-  a set of values corresponding to the discriminator type, and an
-  optional flag indicating if the field is optional.  The name of each
+  actual type and a non-empty set of fields.  A union field has a name, a type,
+  and a set of labels of the discriminator type.  The name of each
   field must be unique.  The pair-wise intersection of union field
-  discriminator values must be disjoint.  An empty set of
-  discriminator values means that this field is the default.
+  labels must be disjoint.  An empty set of labels means
+  that this field is the default.
 
 # Float Models
 
@@ -120,11 +111,6 @@ and respond appropriately.
 - "decimal32" - IEEE 754 of same name
 - "decimal64" - IEEE 754 of same name
 - "decimal128" - IEEE 754 of same name
-
-# Rune/String Encodings
-
-- "ascii" (fixed-length)
-- "utf8"
 
 # Annotations
 
@@ -170,13 +156,11 @@ Root:
 TypeDef:
   { ("name" : string,)? "kind" : "byte" }
 | { ("name" : string,)? "kind" : "bool" }
-| { ("name" : string,)? "kind" : "int", ("bits" : integer,)? ("unsigned" : boolean)? }
-| { ("name" : string,)? "kind" : "float", ("model" : FloatModel)? }
+| { ("name" : string,)? "kind" : "int" (, "bits" : integer)? (, "unsigned" : boolean)? }
+| { ("name" : string,)? "kind" : "float" (, "model" : FloatModel)? }
 | { ("name" : string,)? "kind" : "fixed", "base" : integer, "digits" : integer, "scale" : integer }
-| { ("name" : string,)? "kind" : "rune", ("encoding" : string)? }
-| { ("name" : string,)? "kind" : "bitset", "bits" : integer, "elements" : [ NameValuePair ] }
-| { ("name" : string,)? "kind" : "enum", "type" : Type, "values" : [ NameValuePair ] }
-| { ("name" : string,)? "kind" : "sequence", "type" : Type,  (( "size" : integer ) | ( "size" : [ integer ] ) | ( "capacity" : integer )) }
+| { ("name" : string,)? "kind" : "sequence", "type" : Type  (,("size" : integer ) | ("size" : [ integer ] )? (, "capacity" : integer )? }
+| { ("name" : string,)? "kind" : "string" (, "size" : integer )? (, "capacity" : integer )? }
 | { ("name" : string,)? "kind" : "record", "fields" : [ Field ] }
 | { ("name" : string,)? "kind" : "union", "discriminator" : Type, "fields" : [ UnionField ] }
 
@@ -184,14 +168,11 @@ Type:
   string
 | TypeDef
 
-NameValuePair:
-  { "name" : string, "value" : value }
-
 Field:
   { "name" : string, "type" : Type, ("optional" : boolean)? }
 
 UnionField:
-  { "name" : string, "type" : Type, "discriminator_values" : [ JSONValue ], ("optional" : boolean)? }
+  { "name" : string, "type" : Type, "labels" : [ JSONValue ] }
 
 FloatModel: "binary16" | "binary32" | "binary64" | "binary128" | "decimal32" | "decimal64" | "decimal128"
 ```
