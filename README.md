@@ -121,7 +121,7 @@ and respond appropriately.
 - "decimal64" - IEEE 754 of same name
 - "decimal128" - IEEE 754 of same name
 
-## Rune/String Encodings
+# Rune/String Encodings
 
 - "ascii" (fixed-length)
 - "utf8"
