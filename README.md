@@ -55,6 +55,7 @@ mode should be adopted.
 
 # Types
 
+- **alias** - An alias for another type.  An alias has a name and type.
 - **byte** - An uninterpreted octet.
 - **bool** - Represents a Boolean value (true or false).
 - **int** - Represents an integral number.  An int has the number of
@@ -154,15 +155,16 @@ Root:
   { "types" : [ TypeDef ] }
 
 TypeDef:
-  { ("name" : string,)? "kind" : "byte" }
-| { ("name" : string,)? "kind" : "bool" }
-| { ("name" : string,)? "kind" : "int" (, "bits" : integer)? (, "unsigned" : boolean)? }
-| { ("name" : string,)? "kind" : "float" (, "model" : FloatModel)? }
-| { ("name" : string,)? "kind" : "fixed", "base" : integer, "digits" : integer, "scale" : integer }
-| { ("name" : string,)? "kind" : "sequence", "type" : Type  (,("size" : integer ) | ("size" : [ integer ] )? (, "capacity" : integer )? }
-| { ("name" : string,)? "kind" : "string" (, "size" : integer )? (, "capacity" : integer )? }
-| { ("name" : string,)? "kind" : "record", "fields" : [ Field ] }
-| { ("name" : string,)? "kind" : "union", "discriminator" : Type, "fields" : [ UnionField ] }
+  { "kind" : "alias", "name" : string, "type" : Type }
+| { "kind" : "byte" }
+| { "kind" : "bool" }
+| { "kind" : "int" (, "bits" : integer)? (, "unsigned" : boolean)? }
+| { "kind" : "float" (, "model" : FloatModel)? }
+| { "kind" : "fixed", "base" : integer, "digits" : integer, "scale" : integer }
+| { "kind" : "sequence", "type" : Type  (,("size" : integer ) | ("size" : [ integer ] )? (, "capacity" : integer )? }
+| { "kind" : "string" (, "size" : integer )? (, "capacity" : integer )? }
+| { "kind" : "record", "fields" : [ Field ] }
+| { "kind" : "union", "discriminator" : Type, "fields" : [ UnionField ] }
 
 Type:
   string
