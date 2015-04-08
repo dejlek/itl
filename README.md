@@ -53,9 +53,8 @@ If a serializer or deserializer is given a type that cannot be
 represented in that serialization scheme, then an appropriate failure
 mode should be adopted.
 
-# Types
+# Scalar Types
 
-- **alias** - An alias for another type.  An alias has a name and type.
 - **int** - Represents an integral number.  An int has the number of
   bits needed to represent values of this type and a flag indicating
   if the values are unsigned.  If the number of bits is not present,
@@ -68,6 +67,16 @@ mode should be adopted.
   the total number of digits, and a scale that indicates the number of
   digits after the decimal point.
 - **string** - Represents a text sequence.
+
+Integers, fixed-point numbers, and strings have an optional set of
+name-value pairs and an optional flag indicating if values of this
+type are constrained to the specified set of values.  A value in a
+name-value pair is stored as a string for use as a union
+discriminator.  If an integer, fixed-point, or string is used as a
+discriminator, then the set of name-value pairs must be one-to-one.
+
+# Compound Types
+
 - **sequence** - Represents a homogenous sequence of values of a given
   type.  A sequence has has either:
   1. No size or capacity indicating a dynamic size.
@@ -82,12 +91,14 @@ mode should be adopted.
   has a name, a type, and an optional flag indicating if the field is
   optional.  The name of each field must be unique.
 - **union** - A union represents a value from a finite set of types.
-  A union has a discriminator type that is used to determine the
-  actual type and a non-empty set of fields.  A union field has a name, a type,
-  and a set of labels of the discriminator type.  The name of each
-  field must be unique.  The pair-wise intersection of union field
-  labels must be disjoint.  An empty set of labels means
-  that this field is the default.
+  A union has a discriminator type (int, fixed, string) that is used
+  to determine the actual type and a non-empty set of fields.  A union
+  field has a name, a type, and a set of labels of the discriminator
+  type.  A label must correspond to a named value of the discriminator
+  type.  The name of each field must be unique.  The pair-wise
+  intersection of union field labels must be disjoint.  An empty set
+  of labels means that this field is the default.
+- **alias** - An alias for another type.  An alias has a name and type.
 
 # Float Models
 
@@ -149,14 +160,14 @@ Root:
   { "types" : [ TypeDef ] }
 
 TypeDef:
-  { "kind" : "alias", "name" : string, "type" : Type }
-| { "kind" : "int" (, "bits" : integer)? (, "unsigned" : boolean)? }
+  { "kind" : "int" (, "bits" : integer)? (, "unsigned" : boolean)? (, "values" : Values)? (, "constrained" : boolean)? }
 | { "kind" : "float" (, "model" : FloatModel)? }
-| { "kind" : "fixed", "base" : integer, "digits" : integer, "scale" : integer }
-| { "kind" : "string" }
+| { "kind" : "fixed", "base" : integer, "digits" : integer, "scale" : integer (, "values" : Values)? (, "constrained" : boolean)? }
+| { "kind" : "string" (, "values" : Values)? (, "constrained" : boolean)? }
 | { "kind" : "sequence", "type" : Type  (,("size" : integer ) | ("size" : [ integer ] )? (, "capacity" : integer )? }
 | { "kind" : "record", "fields" : [ Field ] }
 | { "kind" : "union", "discriminator" : Type, "fields" : [ UnionField ] }
+|  { "kind" : "alias", "name" : string, "type" : Type }
 
 Type:
   string
@@ -166,9 +177,11 @@ Field:
   { "name" : string, "type" : Type, ("optional" : boolean)? }
 
 UnionField:
-  { "name" : string, "type" : Type, "labels" : [ JSONValue ] }
+  { "name" : string, "type" : Type, "labels" : [ string ] }
 
 FloatModel: "binary16" | "binary32" | "binary64" | "binary128" | "decimal32" | "decimal64" | "decimal128"
+
+Values: JSON object where all field values are strings
 ```
 
 Every JSON Object ({ ... }) has an optional note field ("note" : {
