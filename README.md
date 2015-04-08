@@ -56,8 +56,6 @@ mode should be adopted.
 # Types
 
 - **alias** - An alias for another type.  An alias has a name and type.
-- **byte** - An uninterpreted octet.
-- **bool** - Represents a Boolean value (true or false).
 - **int** - Represents an integral number.  An int has the number of
   bits needed to represent values of this type and a flag indicating
   if the values are unsigned.  If the number of bits is not present,
@@ -69,6 +67,7 @@ mode should be adopted.
 - **fixed** - Represents a fixed-point number.  A fixed has a base,
   the total number of digits, and a scale that indicates the number of
   digits after the decimal point.
+- **string** - Represents a text sequence.
 - **sequence** - Represents a homogenous sequence of values of a given
   type.  A sequence has has either:
   1. No size or capacity indicating a dynamic size.
@@ -78,11 +77,6 @@ mode should be adopted.
   The size setting is preferred to the capacity.  If the elements
   have a fixed size, then size and capacity can be used to
   pre-allocate buffers.
-- **string** - Represents a text sequence.  A string has an optional
-  integer size and capacity.  If size is specified, it means that the
-  string consists of the specified number of units for an
-  implementation defined unit.  Similarly, capacity represents the
-  maximum number of units in the string.  Size is preferred to capacity.
 - **record** - A record represents a potentially heterogeneous sequence of
   named values.  A record is defined by a list of fields.  Each field
   has a name, a type, and an optional flag indicating if the field is
@@ -145,7 +139,7 @@ direct support for inheritance.
 # Grammar
 
 The grammar is presented as a JSON/BNF hybrid.  Non-terminals are
-capitalized (Root) and non-terminals are lower-case (boolean).
+capitalized (Root) and non-terminals are lower-case (int).
 Terminals refer to JSON values with the same name.  The terminal
 "value" represents any JSON value.  The construct ( ... )? represents
 an optional group.
@@ -156,13 +150,11 @@ Root:
 
 TypeDef:
   { "kind" : "alias", "name" : string, "type" : Type }
-| { "kind" : "byte" }
-| { "kind" : "bool" }
 | { "kind" : "int" (, "bits" : integer)? (, "unsigned" : boolean)? }
 | { "kind" : "float" (, "model" : FloatModel)? }
 | { "kind" : "fixed", "base" : integer, "digits" : integer, "scale" : integer }
+| { "kind" : "string" }
 | { "kind" : "sequence", "type" : Type  (,("size" : integer ) | ("size" : [ integer ] )? (, "capacity" : integer )? }
-| { "kind" : "string" (, "size" : integer )? (, "capacity" : integer )? }
 | { "kind" : "record", "fields" : [ Field ] }
 | { "kind" : "union", "discriminator" : Type, "fields" : [ UnionField ] }
 
