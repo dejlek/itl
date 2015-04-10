@@ -44,7 +44,7 @@ namespace itl {
 
     std::string const name_;
     Type* const type_;
-    friend Dictionary;
+    friend class Dictionary;
   };
 
   struct ConstrainedType {
@@ -82,7 +82,7 @@ namespace itl {
     unsigned int bits_;
     bool isUnsigned_;
 
-    friend Dictionary;
+    friend class Dictionary;
   };
 
   class Float : public Type {
@@ -111,7 +111,7 @@ namespace itl {
 
     Model model_;
 
-    friend Dictionary;
+    friend class Dictionary;
   };
 
   class Fixed : public Type, public ConstrainedType {
@@ -135,7 +135,7 @@ namespace itl {
     unsigned int digits_;
     unsigned int scale_;
 
-    friend Dictionary;
+    friend class Dictionary;
   };
 
   class Sequence : public Type {
@@ -160,7 +160,7 @@ namespace itl {
     std::vector<unsigned int> size_;
     unsigned int capacity_;
 
-    friend Dictionary;
+    friend class Dictionary;
   };
 
   class String : public Type, public ConstrainedType {
@@ -174,7 +174,7 @@ namespace itl {
 
     virtual void accept(TypeVisitor& visitor);
 
-    friend Dictionary;
+    friend class Dictionary;
   };
 
   class Record : public Type {
@@ -213,7 +213,7 @@ namespace itl {
 
     FieldsType fields_;
 
-    friend Dictionary;
+    friend class Dictionary;
   };
 
   class Union : public Type {
@@ -261,7 +261,7 @@ namespace itl {
     Type* discriminator_;
     std::vector<Field> fields_;
 
-    friend Dictionary;
+    friend class Dictionary;
   };
 
   class TypeRef : public Type {
@@ -280,7 +280,7 @@ namespace itl {
     std::string name_;
     Type* type_;
 
-    friend Dictionary;
+    friend class Dictionary;
   };
 
   class TypeVisitor {
